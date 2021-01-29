@@ -1,5 +1,5 @@
 import images from "../gallery-items.js";
-
+let largeImageINDEX = 0;
 const galleryRef = document.querySelector(".js-gallery");
 const lightboxRef = document.querySelector(".js-lightbox");
 const lightboxImageRef = document.querySelector(".lightbox__image");
@@ -24,6 +24,7 @@ function createGalleryItems() {
     itemImageRef.setAttribute("src", image.preview);
     itemImageRef.setAttribute("data-source", image.original);
     itemImageRef.setAttribute("alt", image.description);
+    itemImageRef.setAttribute("data-index", images.indexOf(image));
     itemLinkRef.append(itemImageRef);
 
     itemsToAdd.push(itemLiRef);
@@ -31,14 +32,18 @@ function createGalleryItems() {
   });
 }
 
-createGalleryItems();
-
 galleryRef.addEventListener("click", onGalleryClick);
 lightboxCloseRef.addEventListener("click", closeModal);
 lightboxOverlayRef.addEventListener("click", closeModal);
 document.addEventListener("keydown", function (event) {
   if (event.key === "Escape") {
     closeModal();
+  }
+  if (event.key === "ArrowLeft") {
+    showPreviousImage(largeImageINDEX);
+  }
+  if (event.key === "ArrowRight") {
+    showNextImage(largeImageINDEX);
   }
 });
 
@@ -50,6 +55,7 @@ function onGalleryClick(event) {
   const imageRef = event.target;
   const largeImageURL = imageRef.dataset.source;
   const largeImageALT = imageRef.alt;
+  largeImageINDEX = Number(imageRef.dataset.index);
   setLightboxImage(largeImageURL, largeImageALT);
   openModal();
 }
@@ -72,3 +78,21 @@ function closeModal() {
   lightboxRef.classList.remove("is-open");
   removeLightboxImage();
 }
+
+function showPreviousImage(index) {
+  if (index > 0) {
+    lightboxImageRef.src = images[index - 1].original;
+    lightboxImageRef.alt = images[index - 1].description;
+    largeImageINDEX -= 1;
+  }
+}
+
+function showNextImage(index) {
+  if (index < images.length - 1) {
+    lightboxImageRef.src = images[index + 1].original;
+    lightboxImageRef.alt = images[index + 1].description;
+    largeImageINDEX += 1;
+  }
+}
+
+createGalleryItems();
