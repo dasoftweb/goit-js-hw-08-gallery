@@ -63,4 +63,5 @@ function openModal() {
 
 function closeModal() {
   lightboxRef.classList.remove("is-open");
+  removeLightboxImage()
 }
